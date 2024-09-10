@@ -250,6 +250,7 @@ for epoch in range(n_epochs):
         spike_record[step % update_interval] = spikes["Ae"].get("s").squeeze()
 
         # Optionally plot various simulation information.
+        plot =False
         if plot:
             image = batch["image"].view(28, 28)
             inpt = inputs["X"].view(time, 784).sum(0).view(28, 28)
@@ -345,3 +346,15 @@ print("Proportion weighting accuracy: %.2f \n" % (accuracy["proportion"] / n_tes
 
 print("Progress: %d / %d (%.4f seconds)" % (epoch + 1, n_epochs, t() - start))
 print("Testing complete.\n")
+
+# Save network weights, assignments, proportions, and rates
+torch.save({
+    'model_state_dict': network.state_dict(),
+    'assignments': assignments,
+    'proportions': proportions,
+    'rates': rates
+}, './snn_train.pt')
+
+print('Model weights, assignments, and other data saved.')
+
+
