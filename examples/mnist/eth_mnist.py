@@ -279,6 +279,16 @@ for epoch in range(n_epochs):
 print("Progress: %d / %d (%.4f seconds)" % (epoch + 1, n_epochs, t() - start))
 print("Training complete.\n")
 
+# Save network weights, assignments, proportions, and rates
+torch.save({
+    'model_state_dict': network.state_dict(),
+    'assignments': assignments,
+    'proportions': proportions,
+    'rates': rates
+}, './snn_train.pt')
+
+print('Model weights, assignments, and other data saved.')
+
 # Load MNIST data.
 test_dataset = MNIST(
     PoissonEncoder(time=time, dt=dt),
@@ -291,13 +301,14 @@ test_dataset = MNIST(
     ),
 )
 
+
 # Sequence of accuracy estimates.
 accuracy = {"all": 0, "proportion": 0}
 
 # Record spikes during the simulation.
 spike_record = torch.zeros((1, int(time / dt), n_neurons), device=device)
 
-# Train the network.
+# Test the network.
 print("\nBegin testing\n")
 network.train(mode=False)
 start = t()
@@ -346,15 +357,3 @@ print("Proportion weighting accuracy: %.2f \n" % (accuracy["proportion"] / n_tes
 
 print("Progress: %d / %d (%.4f seconds)" % (epoch + 1, n_epochs, t() - start))
 print("Testing complete.\n")
-
-# Save network weights, assignments, proportions, and rates
-torch.save({
-    'model_state_dict': network.state_dict(),
-    'assignments': assignments,
-    'proportions': proportions,
-    'rates': rates
-}, './snn_train.pt')
-
-print('Model weights, assignments, and other data saved.')
-
-
